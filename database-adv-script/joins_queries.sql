@@ -27,7 +27,10 @@ SELECT
 FROM
     Properties p
 LEFT JOIN
-    Reviews r ON p.property_id = r.property_id;
+    Reviews r ON p.property_id = r.property_id
+ORDER BY
+    p.property_id,  -- Group results by property
+    r.rating DESC;  -- Order reviews within each property by highest rating first
 
 
 -- 3. FULL OUTER JOIN: Retrieve all users and all bookings.
@@ -43,3 +46,4 @@ FROM
     Users u
 FULL OUTER JOIN
     Bookings b ON u.user_id = b.guest_user_id;
+
