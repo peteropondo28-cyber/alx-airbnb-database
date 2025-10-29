@@ -18,18 +18,19 @@ ORDER BY
     total_bookings_made DESC;
 
 
--- QUERY 2: Use a window function (RANK) to rank properties based on the total number of bookings they have received.
+-- QUERY 2: Use a window function (RANK and ROW_NUMBER) to rank properties based on the total number of bookings they have received.
 --
 -- Logic:
 -- 1. The inner CTE (BookingsByProperty) calculates the total number of bookings for each property.
--- 2. The outer query uses the RANK() window function:
---    - ORDER BY total_bookings DESC ranks properties from highest to lowest booking count.
---    - Properties with the same number of bookings will receive the same rank, and the next rank will skip numbers (e.g., 1, 2, 2, 4).
+-- 2. The outer query uses two window functions:
+--    - RANK() OVER (ORDER BY total_bookings DESC) ranks properties, giving the same rank to ties and skipping the next number.
+--    - ROW_NUMBER() OVER (ORDER BY total_bookings DESC) assigns a unique, sequential number to each property, even in case of ties.
 SELECT
     p.property_id,
     p.title,
     bap.total_bookings,
-    RANK() OVER (ORDER BY bap.total_bookings DESC) AS booking_rank
+    RANK() OVER (ORDER BY bap.total_bookings DESC) AS booking_rank,
+    ROW_NUMBER() OVER (ORDER BY bap.total_bookings DESC) AS sequential_row_number
 FROM
     Properties p
 JOIN
